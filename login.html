@@ -14,6 +14,7 @@
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"/>
     <script src="js/global.min.js?ctx=/js/a"></script>
     <script src="js/jquery/jquery-1.12.4.min.js"></script>
+    <script src="http://rescdn.qqmail.com/node/ww/wwopenmng/js/sso/wwLogin-1.0.0.js" type="text/javascript" charset="utf-8"></script>
     <!--[if lt IE 9]><script src="js/common/h5fix.min.js"></script><![endif]-->
     <link rel="stylesheet" href="css/fonts/font-icons.min.css">
     <link rel="stylesheet" href="js/bootstrap/css/bootstrap.min.css">
@@ -41,35 +42,44 @@
             </a>
         </div>
         <div class="login-box-body">
-            <div class="form-group has-feedback">
-                <span class="glyphicon glyphicon-user form-control-feedback" title="登录账号"></span>
-                <input type="text" id="username" name="username" class="form-control required"
-                       data-msg-required="请填写登录账号." placeholder="登录账号"/>
-            </div>
-            <div class="form-group has-feedback">
-                <span class="glyphicon glyphicon-lock form-control-feedback"
-                      title="登录密码，鼠标按下显示密码"
-                      onmousedown="$('#password').attr('type','text')"
-                      onmouseup="$('#password').attr('type','password')">
-                </span>
-                <input type="password" id="password" name="password" class="form-control required"
-                       data-msg-required="请填写登录密码." placeholder="登录密码" autocomplete="off"/>
-            </div>
-            <div class="form-group">
-                <div class="mt5 icheck">
-                    <label title="公共场所慎用,下次不需要再填写帐号"><input type="checkbox"
-                                                            id="rememberUserCode" class="form-control" data-style="minimal-grey">记住账号</label> &nbsp;
-                    <label title="公共场所慎用,下次不需要再填写帐号和密码"><input type="checkbox"
-                                                               id="rememberMe" class="form-control" data-style="minimal-grey"> 自动登录</label>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="hidden" name="__url" value="">
-                <button type="submit" class="btn btn-primary btn-block btn-flat"
-                        id="btnSubmit" data-loading="登录验证成功，正在进入..."
-                        data-login-valid="正在验证登录，请稍候...">立即登录
+            <!--div class="login-box-title">
+                <button type="submit" class="btn"
+                        id="btnAccountLogin">账号密码登录
                 </button>
-            </div>
+                <button type="submit" class="btn"
+                        id="btnScanLogin">企业微信扫码登录
+                </button>
+            </div-->
+            <div id="account-password-login">
+                <div class="form-group has-feedback">
+                    <span class="glyphicon glyphicon-user form-control-feedback" title="登录账号"></span>
+                    <input type="text" id="username" name="username" class="form-control required"
+                           data-msg-required="请填写登录账号." placeholder="登录账号"/>
+                </div>
+                <div class="form-group has-feedback">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"
+                          title="登录密码，鼠标按下显示密码"
+                          onmousedown="$('#password').attr('type','text')"
+                          onmouseup="$('#password').attr('type','password')">
+                    </span>
+                    <input type="password" id="password" name="password" class="form-control required"
+                           data-msg-required="请填写登录密码." placeholder="登录密码" autocomplete="off"/>
+                </div>
+                <div class="form-group">
+                    <div class="mt5 icheck">
+                        <label title="公共场所慎用,下次不需要再填写帐号"><input type="checkbox"
+                                                                id="rememberUserCode" class="form-control" data-style="minimal-grey">记住账号</label> &nbsp;
+                        <label title="公共场所慎用,下次不需要再填写帐号和密码"><input type="checkbox"
+                                                                id="rememberMe" class="form-control" data-style="minimal-grey"> 自动登录</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" name="__url" value="">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat"
+                            id="btnSubmit" data-loading="登录验证成功，正在进入..."
+                            data-login-valid="正在验证登录，请稍候...">立即登录
+                    </button>
+                </div>
             <!--div class="row">
                 <div class="col-xs-12">
                     <a href="register.html" class="pull-left">[ 立即注册 ]</a>
@@ -80,9 +90,12 @@
                     </div>
                 </div>
             </div-->
+            </div>
+            <div>企业微信扫码登录，调试中。。。</div>
+            <div id="enterprise-wechat-login">企业微信扫码登录，调试中。。。</div>
         </div>
         <div class="login-copyright">
-            © 2019-2020
+            © 2019-2022 粤ICP备19143966号-1
             <a style="color:#00458a;" href="" target="_blank">新月上品进销存</a>
             <!--a style="color:#00458a;" href="http://www.beian.miit.gov.cn" target="_blank">苏ICP备19040373号</a-->
             <!--a href='https://gitee.com/jishenghua/JSH_ERP/stargazers' target="_blank"-->
@@ -104,3 +117,4 @@
 <script src="js/common/i18n/jsherp_zh_CN.js"></script>
 <script src="js/md5/md5.js"></script>
 <script src="js/modules/sys/sysLogin.js"></script>
+<script src="js/oauth/wwlogin.js"></script>
