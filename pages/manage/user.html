@@ -176,6 +176,21 @@
             pageList: initPageNum,
             columns: [[
                 {field: 'id', width: 35, align: "center", checkbox:true},
+                {
+                    title: '操作', field: 'isystem', align: "center", width: 80, formatter: function (value, rec, index) {
+                        var str = '';
+                        if(rec.loginame != "jsh") {
+                            str += '<img src="/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editUser(\'' + index + '\');"/>&nbsp;&nbsp;&nbsp;';
+                        }
+                        if (rec.id != rec.tenantId) {
+                            str += '<img src="/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteUser(' + rec.id + ');"/>';
+                        }
+                        else {
+                            str += '';
+                        }
+                        return str;
+                    }
+                },
                 {title: '登录名称', field: 'loginame', width: 80},
                 {title: '用户名称', field: 'username', width: 80, align: "center"},
                 {title: '职位', field: 'position', width: 115, align: "center"},
@@ -184,24 +199,7 @@
                 {title: '电话号码', field: 'phonenum', width: 150, align: "center"},
                 {title: '用户排序', field: 'userBlngOrgaDsplSeq', width: 60, align: "center"},
                 {title: '描述', field: 'description', width: 130},
-                {field: 'orgaId',hidden:true, width: 10},
-                {
-                    title: '操作', field: 'isystem', width: 150, formatter: function (value, rec) {
-                        var str = '';
-                        var rowInfo = rec.id + 'AaBb' + rec.username + 'AaBb' + rec.loginame + 'AaBb' + rec.position
-                            + 'AaBb' + rec.orgAbr + 'AaBb' + rec.email + 'AaBb' + rec.phonenum + 'AaBb' + rec.ismanager
-                            + 'AaBb' + rec.isystem + 'AaBb' + rec.description+'AaBb'+rec.orgaId+'AaBb'+rec.orgaUserRelId
-                            +'AaBb' + rec.userBlngOrgaDsplSeq ;
-                        str += '<img src="/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editUser(\'' + rowInfo + '\');"/>&nbsp;<a onclick="editUser(\'' + rowInfo + '\');" style="text-decoration:none;color:black;" href="javascript:void(0)">编辑</a>&nbsp;&nbsp;';
-                        if (rec.id != rec.tenantId) {
-                            str += '<img src="/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteUser(' + rec.id + ');"/>&nbsp;<a onclick="deleteUser(' + rec.id + ');" style="text-decoration:none;color:black;" href="javascript:void(0)">删除</a>&nbsp;&nbsp;';
-                        }
-                        else {
-                            str += '';
-                        }
-                        return str;
-                    }
-                }
+                {field: 'orgaId',hidden:true, width: 10}
             ]],
             toolbar: [
                 {
@@ -218,6 +216,14 @@
                     iconCls: 'icon-remove',
                     handler: function () {
                         batDeleteUser();
+                    }
+                },
+                {
+                    id: 'syncUser',
+                    text: '同步企业微信用户',
+                    iconCls: 'icon-reload',
+                    handler: function () {
+                        syncUser();
                     }
                 }
             ],
@@ -282,7 +288,7 @@
                     url: "/user/deleteUser",
                     dataType: "json",
                     data: ({
-                        ids: userID,
+                        ids: userID
                     }),
                     success: function (res) {
                         if(res && res.code != 200) {
@@ -321,7 +327,7 @@
                         ids += row[i].id + ",";
                     }
                     if(row[i].loginame == "jsh"){
-                        $.messager.alert('提示', '管理员jsh不能删除！', 'warning');
+                        $.messager.alert('提示', '租户jsh不能删除！', 'warning');
                         return;
                     } else if(row[i].id == row[i].tenantId) {
                         $.messager.alert('提示', '不能删除自己！', 'warning');
@@ -356,6 +362,28 @@
         }
     }
 
+    //从企业微信同步用户
+    function syncUser(){
+        $.ajax({
+            type: "post",
+            url: "/user/syncUser",
+            dataType: "json",
+            success: function (res) {
+                if(res && res.code != 200) {
+                    $.messager.alert('提示', res.msg, 'error');
+                    return;
+                }
+                $.messager.alert('提示', res.msg, 'info');
+                $("#searchBtn").click();
+            },
+            //此处添加错误处理
+            error: function () {
+                $.messager.alert('同步提示', '同步用户信息异常，请稍后再试！', 'error');
+                return;
+            }
+        });
+    }
+
     //增加用户
     var url;
     var userID = 0;
@@ -363,6 +391,9 @@
     var oldLoginName = "";
 
     function addUser() {
+        if(checkPower()){
+            return;
+        }
         $('#userDlg').dialog('open').dialog('setTitle', '<img src="/js/easyui-1.3.5/themes/icons/edit_add.png"/>&nbsp;增加用户');
         $(".window-mask").css({width: webW, height: webH});
         $('#usernameFM').form('clear');
@@ -442,32 +473,31 @@
     });
 
     //编辑用户信息
-    function editUser(usernameTotalInfo) {
-        var usernameInfo = usernameTotalInfo.split("AaBb");
+    function editUser(index) {
+        var rowsdata = $("#tableData").datagrid("getRows")[index];
         var row = {
-            username: usernameInfo[1],
-            loginame: usernameInfo[2],
-            position: usernameInfo[3],
-            email: usernameInfo[5],
-            phonenum: usernameInfo[6],
-            description: usernameInfo[9],
-            orgAbr: usernameInfo[4]=='undefined'?'':usernameInfo[4],
-            orgaId: usernameInfo[10]=='undefined'?'':usernameInfo[10],
-            orgaUserRelId:usernameInfo[11]=='undefined'?'':usernameInfo[11],
-            userBlngOrgaDsplSeq:usernameInfo[12]=='undefined'?'':usernameInfo[12]
-
+            username: rowsdata.username,
+            loginame: rowsdata.loginame,
+            position: rowsdata.position,
+            email: rowsdata.email,
+            phonenum: rowsdata.phonenum,
+            description: rowsdata.description,
+            orgAbr: rowsdata.orgAbr,
+            orgaId: rowsdata.orgaId,
+            orgaUserRelId: rowsdata.orgaUserRelId,
+            userBlngOrgaDsplSeq: rowsdata.userBlngOrgaDsplSeq
         };
-        oldLoginName = usernameInfo[1];
+        oldLoginName = rowsdata.username;
         $('#userDlg').dialog('open').dialog('setTitle', '<img src="/js/easyui-1.3.5/themes/icons/pencil.png"/>&nbsp;编辑用户信息');
         $(".window-mask").css({width: webW, height: webH});
         $('#usernameFM').form('load', row);
-        userID = usernameInfo[0];
+        userID = rowsdata.id;
         //焦点在名称输入框==定焦在输入文字后面
-        $("#username").val("").focus().val(usernameInfo[1]);
+        $("#username").val("").focus().val(rowsdata.username);
         $("#loginame").attr("readonly","readonly");
         /**机构选择*/
         $("#selectType").val("org");
-        url = '/user/updateUser?id=' + usernameInfo[0];
+        url = '/user/updateUser?id=' + rowsdata.id;
     }
 
 
