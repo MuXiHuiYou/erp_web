@@ -2022,6 +2022,11 @@
 			}
 		});
 
+
+	//打印所有标签
+	$("#printDepotLabels").off("click").on("click",function(){
+            window.open("../../js/print/print_labels.html","location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+	});
 		//打印单据
         $("#printDepotHeadShow").off("click").on("click",function(){
             var tableString = $("#depotHeadDlgShow").html();
