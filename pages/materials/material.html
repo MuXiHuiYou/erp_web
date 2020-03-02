@@ -516,9 +516,10 @@
                 columns: [[
                     {field: 'id', width: 35, align: "center", checkbox: true},
                     {
-                        title: '操作', field: 'op', align: "center", width: 60, formatter: function (value, rec, index) {
+                        title: '操作', field: 'op', align: "center", width: 90, formatter: function (value, rec, index) {
                             var str = '';
                             str += '<img title="编辑" src="/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editMaterial(\'' + index + '\');"/>&nbsp;&nbsp;&nbsp;';
+                            str += '<img title="打印" src="/js/easyui-1.3.5/themes/icons/print.png" style="cursor: pointer;" onclick="printMaterial(\'' + index + '\');"/>&nbsp;&nbsp;&nbsp;';
                             str += '<img title="删除" src="/js/easyui-1.3.5/themes/icons/edit_remove.png" style="cursor: pointer;" onclick="deleteMaterial(' + rec.id + ');"/>';
                             return str;
                         }
@@ -1410,6 +1411,13 @@
             $("#materialFM #tt .tabs li").first().click();
             url = '/material/update?id=' + rowsdata.id;
             initDepotList(rowsdata.id); //加载仓库列表页面
+        }
+
+        //信息打印为标签
+        function printMaterial(index) {
+            var rowsdata = $("#tableData").datagrid("getRows")[index];
+            localStorage.setItem("rowsdata", JSON.stringify(rowsdata));
+            window.open("../../js/print/print_label.html","location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
         }
 
         function initDepotList(mId) {
